@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using PAW.Models;
-using PawTask = PAW.Models.Task;
+using PawTask = PAW.Models.PawTask;
 
 namespace PAW.DataAccess.MSSQL;
 
