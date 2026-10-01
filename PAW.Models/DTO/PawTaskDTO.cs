@@ -34,7 +34,6 @@ public class PawTaskDTO
     {
         return new PawTaskDTO
         {
-            GuidId = Guid.NewGuid(),
             Id = task.Id,
             Name = task.Name,
             Description = task.Description!,

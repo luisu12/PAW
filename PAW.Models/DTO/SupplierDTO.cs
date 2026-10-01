@@ -40,8 +40,7 @@ public class SupplierDTO
     {
         return new SupplierDTO
         {
-            Id = Guid.NewGuid(),
-            SupplierID = supplier.SupplierID,
+            SupplierID = supplier.SupplierId,
             SupplierName = supplier.SupplierName,
             ContactName = supplier.ContactName,
             ContactTitle = supplier.ContactTitle,
@@ -58,7 +57,7 @@ public class SupplierDTO
     {
         return new Supplier
         {
-            SupplierID = supplierDTO.SupplierID,
+            SupplierId = supplierDTO.SupplierID,
             SupplierName = supplierDTO.SupplierName,
             ContactName = supplierDTO.ContactName,
             ContactTitle = supplierDTO.ContactTitle,

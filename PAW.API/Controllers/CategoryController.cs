@@ -37,7 +37,7 @@ namespace PAW.API.Controllers
         {
             foreach (var p in Categories)
             {
-                if (p.CategoryID > 0)
+                if (p.CategoryId > 0)
                     await categoryRepository.CreateAsync(p);
                 else
                     await categoryRepository.UpdateAsync(p);

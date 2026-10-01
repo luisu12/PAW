@@ -17,10 +17,9 @@ public class UserRoleDTO
     {
         return new UserRoleDTO
         {
-            GuidId = Guid.NewGuid(),
-            Id = userRole.Id,
-            RoldID = userRole.RoldID,
-            UserID = userRole.UserID
+            Id = userRole.Id ?? 0,
+            RoldID = userRole.RoldId,
+            UserID = userRole.UserId
         };
     }
 
@@ -29,8 +28,8 @@ public class UserRoleDTO
         return new UserRole
         {
             Id = userRoleDTO.Id,
-            RoldID = userRoleDTO.RoldID,
-            UserID = userRoleDTO.UserID
+            RoldId = userRoleDTO.RoldID,
+            UserId = userRoleDTO.UserID
         };
     }
 }

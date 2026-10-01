@@ -17,8 +17,7 @@ public class UserActionDTO
     {
         return new UserActionDTO
         {
-            GuidId = Guid.NewGuid(),
-            Id = action.Id,
+            Id = action.Id ?? 0,
             Name = action.Name,
             Description = action.Description!
         };

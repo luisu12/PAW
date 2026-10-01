@@ -37,7 +37,7 @@ namespace PAW.API.Controllers
         {
             foreach (var p in Components)
             {
-                if (p.ID > 0)
+                if (p.Id > 0)
                     await componentRepository.CreateAsync(p);
                 else
                     await componentRepository.UpdateAsync(p);

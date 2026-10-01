@@ -16,9 +16,8 @@ public class PawRoleDTO
     {
         return new PawRoleDTO
         {
-            Id = Guid.NewGuid(),
-            RoleID = role.RoleID,
-            RoleName = role.RoleName!
+            RoleID = role.RoleId,
+            RoleName = role.RoleName
         };
     }
 
@@ -26,7 +25,7 @@ public class PawRoleDTO
     {
         return new PawRole
         {
-            RoleID = roleDTO.RoleID,
+            RoleId = roleDTO.RoleID,
             RoleName = roleDTO.RoleName
         };
     }

@@ -25,10 +25,9 @@ public class CategoryDTO
     {
         return new CategoryDTO
         {
-            Id = Guid.NewGuid(),
-            CategoryID = category.CategoryID,
+            CategoryID = category.CategoryId,
             CategoryName = category.CategoryName,
-            Description = category.Description!,
+            Description = category.Description,
             LastModified = category.LastModified ?? DateTime.Now,
             ModifiedBy = category.ModifiedBy
         };
@@ -38,7 +37,7 @@ public class CategoryDTO
     {
         return new Category
         {
-            CategoryID = categoryDTO.CategoryID,
+            CategoryId = categoryDTO.CategoryID,
             CategoryName = categoryDTO.CategoryName,
             Description = categoryDTO.Description,
             LastModified = categoryDTO.LastModified,

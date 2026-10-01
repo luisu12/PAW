@@ -31,10 +31,9 @@ public class InventoryDTO
     {
         return new InventoryDTO
         {
-            Id = Guid.NewGuid(),
-            InventoryID = inventory.InventoryID,
-            UnitPrice = inventory.UnitPrice ?? 0,
-            UnitsInStock = inventory.UnitsInStock ?? 0,
+            InventoryID = inventory.InventoryId,
+            UnitPrice = inventory.UnitPrice,
+            UnitsInStock = inventory.UnitsInStock,
             LastUpdated = inventory.LastUpdated ?? DateTime.Now,
             ProductId = inventory.ProductId,
             DateAdded = inventory.DateAdded ?? DateTime.Now,
@@ -46,7 +45,7 @@ public class InventoryDTO
     {
         return new Inventory
         {
-            InventoryID = inventoryDTO.InventoryID,
+            InventoryId = inventoryDTO.InventoryID,
             UnitPrice = inventoryDTO.UnitPrice,
             UnitsInStock = inventoryDTO.UnitsInStock,
             LastUpdated = inventoryDTO.LastUpdated,

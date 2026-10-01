@@ -25,7 +25,6 @@ public class NotificationDTO
     {
         return new NotificationDTO
         {
-            GuidId = Guid.NewGuid(),
             Id = notification.Id,
             UserId = notification.UserId,
             Message = notification.Message,

@@ -37,7 +37,7 @@ namespace PAW.API.Controllers
         {
             foreach (var p in Inventories)
             {
-                if (p.InventoryID > 0)
+                if (p.InventoryId > 0)
                     await inventoryRepository.CreateAsync(p);
                 else
                     await inventoryRepository.UpdateAsync(p);

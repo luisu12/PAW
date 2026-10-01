@@ -17,10 +17,9 @@ public class ComponentDTO
     {
         return new ComponentDTO
         {
-            Id = Guid.NewGuid(),
-            ID = component.ID,
-            Name = component.name,
-            Content = component.content!
+            ID = component.Id,
+            Name = component.Name,
+            Content = component.Content
         };
     }
 
@@ -28,9 +27,9 @@ public class ComponentDTO
     {
         return new Component
         {
-            ID = componentDTO.ID,
-            name = componentDTO.Name,
-            content = componentDTO.Content
+            Id = componentDTO.ID,
+            Name = componentDTO.Name,
+            Content = componentDTO.Content
         };
     }
 }

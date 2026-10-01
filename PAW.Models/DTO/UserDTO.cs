@@ -40,8 +40,7 @@ public class UserDTO
     {
         return new UserDTO
         {
-            Id = Guid.NewGuid(),
-            UserID = user.UserID,
+            UserID = user.UserId,
             Username = user.Username,
             Email = user.Email,
             PasswordHash = user.PasswordHash,
@@ -49,7 +48,7 @@ public class UserDTO
             IsActive = user.IsActive ?? true,
             LastModified = user.LastModified ?? DateTime.Now,
             ModifiedBy = user.ModifiedBy,
-            RoleID = user.RoleID,
+            RoleID = user.RoleId,
             LastModifiedBy = user.LastModifiedBy
         };
     }
@@ -58,7 +57,7 @@ public class UserDTO
     {
         return new User
         {
-            UserID = userDTO.UserID,
+            UserId = userDTO.UserID,
             Username = userDTO.Username,
             Email = userDTO.Email,
             PasswordHash = userDTO.PasswordHash,
@@ -66,7 +65,7 @@ public class UserDTO
             IsActive = userDTO.IsActive,
             LastModified = userDTO.LastModified,
             ModifiedBy = userDTO.ModifiedBy,
-            RoleID = userDTO.RoleID,
+            RoleId = userDTO.RoleID,
             LastModifiedBy = userDTO.LastModifiedBy
         };
     }

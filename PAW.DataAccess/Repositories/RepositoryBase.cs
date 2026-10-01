@@ -38,11 +38,18 @@ public interface IRepositoryBase<T>
     Task<IEnumerable<T>> ReadAsync();
 
     /// <summary>
-    /// Finds an entity from the list of objects
+    /// Finds an entity from the list of objects by int id
     /// </summary>
     /// <param name="id">integer</param>
     /// <returns>Entity by id</returns>
     Task<T> FindAsync(int id);
+
+    /// <summary>
+    /// Finds an entity from the list of objects by decimal id
+    /// </summary>
+    /// <param name="id">decimal id</param>
+    /// <returns>Entity by id</returns>
+    Task<T> FindAsync(decimal id);
 
     /// <summary>
     /// Updates an existing entity asynchronously.
@@ -184,6 +191,18 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     /// Reads an entity of type T asynchronously.
     /// </summary>
     /// <returns>A task that represents the asynchronous operation. The task result contains a collection of entities.</returns>
+    public async Task<T> FindAsync(decimal id)
+    {
+        try
+        {
+            return await _context.Set<T>().FindAsync(id);
+        }
+        catch (Exception ex)
+        {
+            throw new PAWException(ex);
+        }
+    }
+
     public async Task<T> FindAsync(int id)
     {
         try

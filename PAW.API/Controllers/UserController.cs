@@ -37,7 +37,7 @@ namespace PAW.API.Controllers
         {
             foreach (var p in Users)
             {
-                if (p.UserID > 0)
+                if (p.UserId > 0)
                     await userRepository.CreateAsync(p);
                 else
                     await userRepository.UpdateAsync(p);
