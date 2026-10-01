@@ -1,6 +1,6 @@
 ﻿namespace PAW.Models;
 
-public partial class Role
+public partial class PawRole
 {
     public int RoleId { get; set; }
 

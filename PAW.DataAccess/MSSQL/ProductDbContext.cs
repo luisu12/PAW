@@ -37,7 +37,7 @@ public partial class ProductDbContext : DbContext
 
     public virtual DbSet<Product> Products { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
+    public virtual DbSet<PawRole> Roles { get; set; }
 
     public virtual DbSet<Supplier> Suppliers { get; set; }
 
@@ -209,7 +209,7 @@ public partial class ProductDbContext : DbContext
                 .HasConstraintName("FK__Products__Suppli__5AEE82B9");
         });
 
-        modelBuilder.Entity<Role>(entity =>
+        modelBuilder.Entity<PawRole>(entity =>
         {
             entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE3AA5D18E57");
 

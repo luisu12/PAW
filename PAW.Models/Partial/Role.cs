@@ -1,5 +1,5 @@
 ﻿namespace PAW.Models;
 
-public partial class Role : Entity
+public partial class PawRole : Entity
 {
 }

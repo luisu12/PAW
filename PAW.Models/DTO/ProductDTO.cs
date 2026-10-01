@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PAW.Models.DTO;
 
@@ -6,6 +7,8 @@ public class ProductDTO
 {
     [JsonPropertyName("id")]
     public Guid Id { get; set; }
+
+    [Key]
     [JsonPropertyName("productId")]
     public int ProductId { get; set; }
     [JsonPropertyName("name")]
