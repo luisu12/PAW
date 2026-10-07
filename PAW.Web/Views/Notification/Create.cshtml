@@ -1,0 +1,20 @@
+@model PAW.Models.DTO.NotificationDTO
+@{
+    ViewData["Title"] = "Create Notification";
+}
+
+<div class="container mt-4">
+    <h2>Create Notification</h2>
+    <form asp-action="Create" method="post">
+        <div class="mb-3">
+            <label class="form-label">User Id</label>
+            <input asp-for="UserId" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Message</label>
+            <textarea asp-for="Message" class="form-control"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

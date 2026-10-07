@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PAW.Web.Models;
 using PAW.Web.Services;
+using PAW.Models.DTO;
 
 namespace PAW.Web.Controllers
 {
@@ -21,6 +22,55 @@ namespace PAW.Web.Controllers
         {
             var result = await _notificationService.GetNotificationsAsync();
             return View(result);
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(NotificationDTO notification)
+        {
+            if (!ModelState.IsValid) return View(notification);
+            await _notificationService.CreateNotificationAsync(notification);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var notification = await _notificationService.GetNotificationByIdAsync(id);
+            if (notification == null) return NotFound();
+            return View(notification);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, NotificationDTO notification)
+        {
+            if (!ModelState.IsValid) return View(notification);
+            await _notificationService.UpdateNotificationAsync(id, notification);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var notification = await _notificationService.GetNotificationByIdAsync(id);
+            if (notification == null) return NotFound();
+            return View(notification);
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var notification = await _notificationService.GetNotificationByIdAsync(id);
+            if (notification == null) return NotFound();
+            return View(notification);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _notificationService.DeleteNotificationAsync(id);
+            return RedirectToAction(nameof(Index));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

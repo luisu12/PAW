@@ -1,0 +1,16 @@
+@model PAW.Models.DTO.SupplierDTO
+@{
+    ViewData["Title"] = "Supplier Details";
+}
+
+<div class="container mt-4">
+    <h2>Supplier Details</h2>
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.SupplierID</dd>
+
+        <dt class="col-sm-3">Supplier Name</dt>
+        <dd class="col-sm-9">@Model.SupplierName</dd>
+    </dl>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>

@@ -36,8 +36,14 @@ internal static class RestProviderHelpers
 	/// <exception cref="HttpRequestException">Thrown if the response indicates a failure.</exception>
 	internal static async Task<string> GetResponse(HttpResponseMessage response)
 	{
-		response.EnsureSuccessStatusCode();
-		return await response.Content.ReadAsStringAsync();
+		// Read response content first so we can include server-provided error details
+		var content = await response.Content.ReadAsStringAsync();
+		if (!response.IsSuccessStatusCode)
+		{
+			// Throw a detailed exception including status code and server response body to aid debugging
+			throw new HttpRequestException($"Request failed with status {(int)response.StatusCode} ({response.StatusCode}). Response: {content}");
+		}
+		return content;
 	}
 
 	/// <summary>

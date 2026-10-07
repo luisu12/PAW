@@ -1,0 +1,16 @@
+@model PAW.Models.DTO.PawRoleDTO
+@{
+    ViewData["Title"] = "Role Details";
+}
+
+<div class="container mt-4">
+    <h2>Role Details</h2>
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.RoleID</dd>
+
+        <dt class="col-sm-3">Role Name</dt>
+        <dd class="col-sm-9">@Model.RoleName</dd>
+    </dl>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>

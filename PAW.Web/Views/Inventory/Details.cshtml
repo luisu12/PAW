@@ -1,0 +1,19 @@
+@model PAW.Models.DTO.InventoryDTO
+@{
+    ViewData["Title"] = "Inventory Details";
+}
+
+<div class="container mt-4">
+    <h2>Inventory Details</h2>
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.InventoryID</dd>
+
+        <dt class="col-sm-3">Unit Price</dt>
+        <dd class="col-sm-9">@Model.UnitPrice</dd>
+
+        <dt class="col-sm-3">Units In Stock</dt>
+        <dd class="col-sm-9">@Model.UnitsInStock</dd>
+    </dl>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>

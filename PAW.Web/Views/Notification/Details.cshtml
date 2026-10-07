@@ -1,0 +1,19 @@
+@model PAW.Models.DTO.NotificationDTO
+@{
+    ViewData["Title"] = "Notification Details";
+}
+
+<div class="container mt-4">
+    <h2>Notification Details</h2>
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.Id</dd>
+
+        <dt class="col-sm-3">User Id</dt>
+        <dd class="col-sm-9">@Model.UserId</dd>
+
+        <dt class="col-sm-3">Message</dt>
+        <dd class="col-sm-9">@Model.Message</dd>
+    </dl>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>
