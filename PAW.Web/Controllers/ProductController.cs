@@ -44,8 +44,41 @@ namespace PAW.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, ProductDTO product)
+        public async Task<IActionResult> Edit(int id, [FromForm] ProductDTO product)
         {
+            // Log raw form values to diagnose binding issues
+            try
+            {
+                _logger.LogDebug("Request.Form contents for Product Edit:");
+                foreach (var key in Request.Form.Keys)
+                {
+                    _logger.LogDebug($"Form[{key}] = '{Request.Form[key]}'");
+                }
+
+                // Log ModelState entries and errors
+                foreach (var entry in ModelState)
+                {
+                    var errors = entry.Value.Errors;
+                    if (errors != null && errors.Count > 0)
+                    {
+                        foreach (var err in errors)
+                        {
+                            _logger.LogWarning($"ModelState error for '{entry.Key}': {err.ErrorMessage} {err.Exception}");
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogDebug($"ModelState OK for '{entry.Key}' Value='{entry.Value?.AttemptedValue}'");
+                    }
+                }
+
+                _logger.LogDebug($"Product Edit received (model): ProductId='{product?.ProductId}', Name='{product?.Name}', Description='{product?.Description}'");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error logging form/model state for Product Edit");
+            }
+
             if (!ModelState.IsValid) return View(product);
             await _productService.UpdateProductAsync(id, product);
             return RedirectToAction(nameof(Index));

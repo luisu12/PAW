@@ -47,8 +47,9 @@ public class PawTaskService : ServiceBase, IPawTaskService
 
     public async Task<bool> UpdatePawTaskAsync(int id, PawTaskDTO task)
     {
-        var content = JsonProvider.Serialize(task);
-        var response = await _restProvider.PutAsync(SetPathUrl(_path), id.ToString(), content);
+        // API Save endpoint expects an array of PawTask objects via POST
+        var content = JsonProvider.Serialize(new[] { task });
+        var response = await _restProvider.PostAsync(SetPathUrl(_path), content);
         return !string.IsNullOrEmpty(response);
     }
 

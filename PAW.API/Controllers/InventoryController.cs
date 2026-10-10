@@ -38,9 +38,9 @@ namespace PAW.API.Controllers
             foreach (var p in Inventories)
             {
                 if (p.InventoryId > 0)
-                    await inventoryRepository.CreateAsync(p);
-                else
                     await inventoryRepository.UpdateAsync(p);
+                else
+                    await inventoryRepository.CreateAsync(p);
             }
 
             /*Inventories.ToList().ForEach(async x =>
@@ -53,9 +53,11 @@ namespace PAW.API.Controllers
             return true;
         }
 
-        [HttpDelete]
-        public async Task<bool> Delete(Inventory inventory)
+        [HttpDelete("{id:int}")]
+        public async Task<bool> Delete(int id)
         {
+            var inventory = await inventoryRepository.FindAsync(id);
+            if (inventory == null) return false;
             return await inventoryRepository.DeleteAsync(inventory);
         }
     }

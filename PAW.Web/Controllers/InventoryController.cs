@@ -11,10 +11,11 @@ namespace PAW.Web.Controllers
     {
         private readonly IInventoryService _inventoryService;
         private readonly ILogger<InventoryController> _logger;
-
-        public InventoryController(IInventoryService inventoryService, ILogger<InventoryController> logger)
+        private readonly IProductService _productService;
+        public InventoryController(IInventoryService inventoryService, IProductService productService, ILogger<InventoryController> logger)
         {
             _inventoryService = inventoryService;
+            _productService = productService;
             _logger = logger;
         }
 
@@ -24,9 +25,28 @@ namespace PAW.Web.Controllers
             return View(result);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            // populate products list for dropdown and await population before rendering
+            await PopulateProductsAsync();
             return View();
+        }
+
+        // Populate products list for dropdown using injected IProductService
+        private async Task PopulateProductsAsync()
+        {
+            try
+            {
+                var list = await _productService.GetProductsAsync();
+                ViewBag.Products = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(list, "ProductId", "Name");
+                return;
+            }
+            catch
+            {
+                // ignored - fallback to empty list
+            }
+
+            ViewBag.Products = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(System.Array.Empty<object>());
         }
 
         [HttpPost]
@@ -41,6 +61,7 @@ namespace PAW.Web.Controllers
         {
             var inventory = await _inventoryService.GetInventoryByIdAsync(id);
             if (inventory == null) return NotFound();
+            await PopulateProductsAsync();
             return View(inventory);
         }
 

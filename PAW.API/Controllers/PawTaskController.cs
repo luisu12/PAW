@@ -38,9 +38,9 @@ namespace PAW.API.Controllers
             foreach (var p in Tasks)
             {
                 if (p.Id > 0)
-                    await pawTaskRepository.CreateAsync(p);
-                else
                     await pawTaskRepository.UpdateAsync(p);
+                else
+                    await pawTaskRepository.CreateAsync(p);
             }
 
             /*Tasks.ToList().ForEach(async x =>
@@ -53,9 +53,11 @@ namespace PAW.API.Controllers
             return true;
         }
 
-        [HttpDelete]
-        public async Task<bool> Delete(PawTask task)
+        [HttpDelete("{id:int}")]
+        public async Task<bool> Delete(int id)
         {
+            var task = await pawTaskRepository.FindAsync(id);
+            if (task == null) return false;
             return await pawTaskRepository.DeleteAsync(task);
         }
     }

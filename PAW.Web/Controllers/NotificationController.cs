@@ -24,15 +24,43 @@ namespace PAW.Web.Controllers
             return View(result);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            // populate users for dropdown and await before rendering
+            await PopulateUsersAsync();
             return View();
+        }
+
+        private async Task PopulateUsersAsync()
+        {
+            try
+            {
+                var userService = HttpContext.RequestServices.GetService(typeof(IUserService)) as IUserService;
+                if (userService != null)
+                {
+                    var list = await userService.GetUsersAsync();
+                    ViewBag.Users = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(list, "UserID", "Username");
+                }
+                else
+                {
+                    ViewBag.Users = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enumerable.Empty<object>());
+                }
+            }
+            catch
+            {
+                ViewBag.Users = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enumerable.Empty<object>());
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(NotificationDTO notification)
         {
-            if (!ModelState.IsValid) return View(notification);
+            if (!ModelState.IsValid)
+            {
+                await PopulateUsersAsync();
+                return View(notification);
+            }
+
             await _notificationService.CreateNotificationAsync(notification);
             return RedirectToAction(nameof(Index));
         }

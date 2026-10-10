@@ -5,7 +5,7 @@ namespace PAW.Models.DTO;
 public class UserActionDTO
 {
     [JsonPropertyName("Id")]
-    public decimal Id { get; set; }
+    public decimal? Id { get; set; }
 
     [JsonPropertyName("Name")]
     public string? Name { get; set; }

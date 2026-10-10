@@ -30,18 +30,19 @@ public class ProductDTO
 
     public static ProductDTO ConvertFrom(Product product)
     {
+        // Guard against null inner values to avoid NullReferenceException when fields are missing
         return new ProductDTO
         {
-            Id = Guid.NewGuid(),
-            ProductId = product.ProductId,
-            Name = product.ProductName!,
-            Description = product.Description!,
-            Rating = (int)(product.Rating ?? 0),
-            ModifiedBy = product.ModifiedBy,
-            CreatedBy = product.CreatedBy,
-            Comments = string.Empty, // Assuming comments are not present in the Product entity
-            CreatedDate = product.LastModified ?? DateTime.Now, // Assuming LastModified is used as CreatedDate
-            ModifiedDate = product.LastModified ?? DateTime.Now // Assuming LastModified is used as ModifiedDate
+            Id = product == null ? Guid.Empty : Guid.NewGuid(),
+            ProductId = product?.ProductId ?? 0,
+            Name = product?.ProductName ?? string.Empty,
+            Description = product?.Description ?? string.Empty,
+            Rating = (int)(product?.Rating ?? 0),
+            ModifiedBy = product?.ModifiedBy,
+            CreatedBy = product?.CreatedBy,
+            Comments = product?.Comments ?? string.Empty,
+            CreatedDate = product?.LastModified ?? DateTime.Now, // Assuming LastModified is used as CreatedDate
+            ModifiedDate = product?.LastModified ?? DateTime.Now // Assuming LastModified is used as ModifiedDate
         };
     }
 
@@ -53,9 +54,11 @@ public class ProductDTO
                 ProductName = productDTO.Name,
                 Description = productDTO.Description,
                 Rating = productDTO.Rating,
+                Comments = productDTO.Comments,
                 ModifiedBy = productDTO.ModifiedBy,
                 CreatedBy = productDTO.CreatedBy,
-                LastModified = productDTO.ModifiedDate
+                // Ensure LastModified is a valid SQL DateTime
+                LastModified = productDTO.ModifiedDate == default(DateTime) ? DateTime.Now : productDTO.ModifiedDate
             };
     }
 }

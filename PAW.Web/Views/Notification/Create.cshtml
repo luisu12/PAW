@@ -7,8 +7,10 @@
     <h2>Create Notification</h2>
     <form asp-action="Create" method="post">
         <div class="mb-3">
-            <label class="form-label">User Id</label>
-            <input asp-for="UserId" class="form-control" />
+            <label class="form-label">User</label>
+            <select asp-for="UserId" asp-items="ViewBag.Users" class="form-select">
+                <option value="">-- Select user --</option>
+            </select>
         </div>
         <div class="mb-3">
             <label class="form-label">Message</label>

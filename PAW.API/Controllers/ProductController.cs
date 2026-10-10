@@ -32,13 +32,16 @@ namespace PAW.API.Controllers
         }*/
 
         [HttpPost]
-        public async Task<bool> Save([FromBody] IEnumerable<Product> Products)
+        public async Task<bool> Save([FromBody] IEnumerable<PAW.Models.DTO.ProductDTO> Products)
         {
-            foreach (var p in Products)
+            foreach (var dto in Products)
             {
+                var p = PAW.Models.DTO.ProductDTO.ConvertTo(dto);
+                // Update when existing, create when new
                 if (p.ProductId > 0)
+                    await productRepository.UpdateAsync(p);
+                else
                     await productRepository.CreateAsync(p);
-                else await productRepository.UpdateAsync(p);
             }
 
             /*Products.ToList().ForEach(async x =>
@@ -50,10 +53,12 @@ namespace PAW.API.Controllers
             return true;
         }
 
-        [HttpDelete]
-        public async Task<bool> Delete(Product Product)
+        [HttpDelete("{id:int}")]
+        public async Task<bool> Delete(int id)
         {
-            return await productRepository.DeleteAsync(Product);
+            var product = await productRepository.FindAsync(id);
+            if (product == null) return false;
+            return await productRepository.DeleteAsync(product);
         }
     }
 }

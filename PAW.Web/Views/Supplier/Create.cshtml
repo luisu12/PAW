@@ -14,6 +14,18 @@
             <label class="form-label">Contact Name</label>
             <input asp-for="ContactName" class="form-control" />
         </div>
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input asp-for="ContactTitle" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input asp-for="Phone" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Country</label>
+            <input asp-for="Country" class="form-control" />
+        </div>
         <button type="submit" class="btn btn-primary">Save</button>
         <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </form>

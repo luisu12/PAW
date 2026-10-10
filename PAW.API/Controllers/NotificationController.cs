@@ -33,29 +33,26 @@ namespace PAW.API.Controllers
         }*/
 
         [HttpPost]
-        public async Task<bool> Save([FromBody] IEnumerable<Notification> Notifications)
+        public async Task<bool> Save([FromBody] IEnumerable<PAW.Models.DTO.NotificationDTO> Notifications)
         {
-            foreach (var p in Notifications)
+            foreach (var dto in Notifications)
             {
+                var p = PAW.Models.DTO.NotificationDTO.ConvertTo(dto);
+                // Update when existing, create when new
                 if (p.Id > 0)
-                    await notificationRepository.CreateAsync(p);
-                else
                     await notificationRepository.UpdateAsync(p);
+                else
+                    await notificationRepository.CreateAsync(p);
             }
 
-            /*Notifications.ToList().ForEach(async x =>
-            {
-                if (x.Id > 0)
-                    await notificationRepository.CreateAsync(x);
-                else
-                    await notificationRepository.UpdateAsync(x);
-            });*/
             return true;
         }
 
-        [HttpDelete]
-        public async Task<bool> Delete(Notification notification)
+        [HttpDelete("{id:int}")]
+        public async Task<bool> Delete(int id)
         {
+            var notification = await notificationRepository.FindAsync(id);
+            if (notification == null) return false;
             return await notificationRepository.DeleteAsync(notification);
         }
     }

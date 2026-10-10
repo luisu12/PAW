@@ -131,7 +131,10 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
         }
         catch (Exception ex)
         {
-            throw new PAWException(ex);
+            // Include inner exception details in PAWException so callers see diagnostic information during debugging.
+            var details = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+            var full = $"Repository UpdateAsync failed: {details} -- Stack: {ex.StackTrace}";
+            throw new PAWException(new Exception(full, ex));
         }
     }
 
@@ -183,7 +186,65 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message, ex);
+            // If a SqlNullValueException occurred during materialization, collect quick diagnostics
+            try
+            {
+                var isSqlNull = ex is System.Data.SqlTypes.SqlNullValueException || ex.InnerException is System.Data.SqlTypes.SqlNullValueException;
+                if (isSqlNull)
+                {
+                    try
+                    {
+                        var entityType = _context.Model.FindEntityType(typeof(T));
+                        var tableName = entityType?.GetTableName();
+                        var schema = entityType?.GetSchema();
+                        var fullName = tableName != null ? (string.IsNullOrEmpty(schema) ? $"[{tableName}]" : $"[{schema}].[{tableName}]") : typeof(T).Name;
+
+                        using var conn = _context.Database.GetDbConnection();
+                        if (conn.State != System.Data.ConnectionState.Open) conn.Open();
+                        using var cmd = conn.CreateCommand();
+                        cmd.CommandText = $"SELECT TOP 5 * FROM {fullName}";
+                        using var reader = await cmd.ExecuteReaderAsync();
+                        var rowsInfo = new System.Text.StringBuilder();
+                        var rowIndex = 0;
+                        while (await reader.ReadAsync() && rowIndex < 5)
+                        {
+                            rowsInfo.AppendLine($"Row {rowIndex}:");
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                var name = reader.GetName(i);
+                                var isDbNull = reader.IsDBNull(i);
+                                rowsInfo.Append($"  {name}={(isDbNull ? "NULL" : reader.GetValue(i)?.ToString())}\n");
+                            }
+                            rowIndex++;
+                        }
+
+                        var detail = $"SqlNullValueException while reading {typeof(T).Name} from {fullName}. Sample rows:\n{rowsInfo}";
+                        // Additional quick checks for common numeric columns when reading UserRole
+                        if (typeof(T).Name.IndexOf("UserRole", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            try
+                            {
+                                using var countCmd = conn.CreateCommand();
+                                countCmd.CommandText = $"SELECT COUNT(*) FROM {fullName} WHERE RoldID IS NULL OR UserID IS NULL";
+                                var nullCount = (long)countCmd.ExecuteScalar();
+                                detail += $"\nUserRole null count (RoldID or UserID): {nullCount}";
+                            }
+                            catch { }
+                        }
+
+                        System.Diagnostics.Debug.WriteLine(detail);
+                        throw new PAWException(new Exception(detail, ex));
+                    }
+                    catch (Exception inner)
+                    {
+                        // If diagnostics collection fails, fall back to original exception
+                        throw new PAWException(new Exception($"ReadAsync failed and diagnostics collection failed: {inner.Message}", ex));
+                    }
+                }
+            }
+            catch { }
+
+            throw new PAWException(ex);
         }
     }
 

@@ -37,10 +37,11 @@ namespace PAW.API.Controllers
         {
             foreach (var p in Components)
             {
+                // Update when existing, create when new
                 if (p.Id > 0)
-                    await componentRepository.CreateAsync(p);
-                else
                     await componentRepository.UpdateAsync(p);
+                else
+                    await componentRepository.CreateAsync(p);
             }
 
             /*Components.ToList().ForEach(async x =>
@@ -53,9 +54,11 @@ namespace PAW.API.Controllers
             return true;
         }
 
-        [HttpDelete]
-        public async Task<bool> Delete(Component component)
+        [HttpDelete("{id:int}")]
+        public async Task<bool> Delete(int id)
         {
+            var component = await componentRepository.FindAsync(id);
+            if (component == null) return false;
             return await componentRepository.DeleteAsync(component);
         }
     }

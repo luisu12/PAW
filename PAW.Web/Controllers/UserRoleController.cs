@@ -24,15 +24,65 @@ namespace PAW.Web.Controllers
             return View(result);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            await PopulateUsersAsync();
+            await PopulateRolesAsync();
+            return View(new UserRoleDTO());
+        }
+
+        private async Task PopulateUsersAsync()
+        {
+            try
+            {
+                var userService = HttpContext.RequestServices.GetService(typeof(IUserService)) as IUserService;
+                if (userService != null)
+                {
+                    var list = await userService.GetUsersAsync();
+                    ViewBag.Users = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(list, "UserID", "Username");
+                }
+                else
+                {
+                    ViewBag.Users = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enumerable.Empty<object>());
+                }
+            }
+            catch
+            {
+                ViewBag.Users = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enumerable.Empty<object>());
+            }
+        }
+
+        private async Task PopulateRolesAsync()
+        {
+            try
+            {
+                var roleService = HttpContext.RequestServices.GetService(typeof(IPawRoleService)) as IPawRoleService;
+                if (roleService != null)
+                {
+                    var list = await roleService.GetPawRolesAsync();
+                    ViewBag.Roles = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(list, "RoleID", "RoleName");
+                }
+                else
+                {
+                    ViewBag.Roles = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enumerable.Empty<object>());
+                }
+            }
+            catch
+            {
+                ViewBag.Roles = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enumerable.Empty<object>());
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(UserRoleDTO userRole)
+        public async Task<IActionResult> Create([FromForm] UserRoleDTO userRole)
         {
-            if (!ModelState.IsValid) return View(userRole);
+            if (!ModelState.IsValid)
+            {
+                await PopulateUsersAsync();
+                await PopulateRolesAsync();
+                return View(userRole);
+            }
+
             await _userRoleService.CreateUserRoleAsync(userRole);
             return RedirectToAction(nameof(Index));
         }
@@ -41,13 +91,20 @@ namespace PAW.Web.Controllers
         {
             var userRole = await _userRoleService.GetUserRoleByIdAsync(id);
             if (userRole == null) return NotFound();
+            await PopulateUsersAsync();
+            await PopulateRolesAsync();
             return View(userRole);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(decimal id, UserRoleDTO userRole)
+        public async Task<IActionResult> Edit(decimal id, [FromForm] UserRoleDTO userRole)
         {
-            if (!ModelState.IsValid) return View(userRole);
+            if (!ModelState.IsValid)
+            {
+                await PopulateUsersAsync();
+                await PopulateRolesAsync();
+                return View(userRole);
+            }
             await _userRoleService.UpdateUserRoleAsync(id, userRole);
             return RedirectToAction(nameof(Index));
         }

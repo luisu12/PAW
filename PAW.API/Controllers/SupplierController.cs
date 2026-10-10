@@ -33,14 +33,14 @@ namespace PAW.API.Controllers
         }*/
 
         [HttpPost]
-        public async Task<bool> Save([FromBody] IEnumerable<Supplier> Suppliers)
+        public async Task<bool> Save([FromBody] IEnumerable<Supplier> suppliers)
         {
-            foreach (var p in Suppliers)
+            foreach (var p in suppliers)
             {
                 if (p.SupplierId > 0)
-                    await supplierRepository.CreateAsync(p);
-                else
                     await supplierRepository.UpdateAsync(p);
+                else
+                    await supplierRepository.CreateAsync(p);
             }
 
             /*Suppliers.ToList().ForEach(async x =>
@@ -53,9 +53,11 @@ namespace PAW.API.Controllers
             return true;
         }
 
-        [HttpDelete]
-        public async Task<bool> Delete(Supplier supplier)
+        [HttpDelete("{id:int}")]
+        public async Task<bool> Delete(int id)
         {
+            var supplier = await supplierRepository.FindAsync(id);
+            if (supplier == null) return false;
             return await supplierRepository.DeleteAsync(supplier);
         }
     }

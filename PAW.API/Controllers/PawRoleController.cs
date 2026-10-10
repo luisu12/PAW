@@ -38,9 +38,9 @@ namespace PAW.API.Controllers
             foreach (var p in Roles)
             {
                 if (p.RoleId > 0)
-                    await pawRoleRepository.CreateAsync(p);
-                else
                     await pawRoleRepository.UpdateAsync(p);
+                else
+                    await pawRoleRepository.CreateAsync(p);
             }
 
             /*Roles.ToList().ForEach(async x =>
@@ -53,9 +53,11 @@ namespace PAW.API.Controllers
             return true;
         }
 
-        [HttpDelete]
-        public async Task<bool> Delete(PawRole pawRole)
+        [HttpDelete("{id:int}")]
+        public async Task<bool> Delete(int id)
         {
+            var pawRole = await pawRoleRepository.FindAsync(id);
+            if (pawRole == null) return false;
             return await pawRoleRepository.DeleteAsync(pawRole);
         }
     }

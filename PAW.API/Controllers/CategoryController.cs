@@ -37,10 +37,11 @@ namespace PAW.API.Controllers
         {
             foreach (var p in Categories)
             {
+                // Update existing when CategoryId > 0, otherwise create new
                 if (p.CategoryId > 0)
-                    await categoryRepository.CreateAsync(p);
-                else
                     await categoryRepository.UpdateAsync(p);
+                else
+                    await categoryRepository.CreateAsync(p);
             }
 
             /*Categories.ToList().ForEach(async x =>
@@ -53,9 +54,11 @@ namespace PAW.API.Controllers
             return true;
         }
 
-        [HttpDelete]
-        public async Task<bool> Delete(Category category)
+        [HttpDelete("{id:int}")]
+        public async Task<bool> Delete(int id)
         {
+            var category = await categoryRepository.FindAsync(id);
+            if (category == null) return false;
             return await categoryRepository.DeleteAsync(category);
         }
     }

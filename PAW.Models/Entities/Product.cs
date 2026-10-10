@@ -22,6 +22,8 @@ public partial class Product
 
     public string? CreatedBy { get; set; }
 
+    // Comments is provided by the inherited Entity.Comments (NotMapped) — do not map to DB here.
+
     public virtual Category? Category { get; set; }
 
     public virtual Inventory? Inventory { get; set; }

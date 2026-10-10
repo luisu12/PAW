@@ -6,15 +6,34 @@
 <div class="container mt-4">
     <h2>Create Action</h2>
     <form asp-action="Create" method="post">
+        @* include hidden id to ensure binding and explicit name attributes for inputs *@
+        <input type="hidden" asp-for="Id" />
         <div class="mb-3">
             <label class="form-label">Name</label>
-            <input asp-for="Name" class="form-control" />
+            <input asp-for="Name" class="form-control" name="Name" />
         </div>
         <div class="mb-3">
             <label class="form-label">Description</label>
-            <textarea asp-for="Description" class="form-control"></textarea>
+            <textarea asp-for="Description" class="form-control" name="Description"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
         <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
+
+<script>
+    // Lightweight client-side debug to ensure browser posts the expected values
+    (function() {
+        var form = document.querySelector('form[asp-action="Create"]') || document.querySelector('form');
+        if (!form) return;
+        form.addEventListener('submit', function (e) {
+            try {
+                var name = form.querySelector('[name="Name"]')?.value;
+                var desc = form.querySelector('[name="Description"]')?.value;
+                console.debug('UserAction form submit - Name:', name, 'Description:', desc);
+            } catch (err) {
+                console.debug('UserAction form logging error', err);
+            }
+        });
+    })();
+</script>

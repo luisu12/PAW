@@ -26,6 +26,7 @@ public class SupplierService : ServiceBase, ISupplierService
     public async Task<IEnumerable<SupplierDTO>> GetSuppliersAsync()
     {
         var response = await _restProvider.GetAsync(SetPathUrl(_path), id: null);
+        // No-op change: touch file to trigger patch group
         var suppliers = await JsonProvider.DeserializeAsync<IEnumerable<SupplierDTO>>(response);
         return suppliers;
     }
@@ -39,15 +40,17 @@ public class SupplierService : ServiceBase, ISupplierService
 
     public async Task<bool> CreateSupplierAsync(SupplierDTO supplier)
     {
-        var content = JsonProvider.Serialize(supplier);
+        // API expects an array of Supplier objects
+        var content = JsonProvider.Serialize(new[] { supplier });
         var response = await _restProvider.PostAsync(SetPathUrl(_path), content);
         return !string.IsNullOrEmpty(response);
     }
 
     public async Task<bool> UpdateSupplierAsync(int id, SupplierDTO supplier)
     {
-        var content = JsonProvider.Serialize(supplier);
-        var response = await _restProvider.PutAsync(SetPathUrl(_path), id.ToString(), content);
+        // API Save endpoint uses POST with an array for create/update
+        var content = JsonProvider.Serialize(new[] { supplier });
+        var response = await _restProvider.PostAsync(SetPathUrl(_path), content);
         return !string.IsNullOrEmpty(response);
     }
 

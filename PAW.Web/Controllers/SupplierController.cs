@@ -40,7 +40,7 @@ namespace PAW.Web.Controllers
         {
             var supplier = await _supplierService.GetSupplierByIdAsync(id);
             if (supplier == null) return NotFound();
-            return View(supplier);
+            return View(model: supplier);
         }
 
         [HttpPost]

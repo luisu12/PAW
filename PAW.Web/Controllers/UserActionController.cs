@@ -26,13 +26,48 @@ namespace PAW.Web.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            // Provide an initialized DTO so the hidden Id field renders a default numeric value (0)
+            return View(new UserActionDTO());
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(UserActionDTO action)
+        public async Task<IActionResult> Create([FromForm] UserActionDTO action)
         {
+            // Log raw form values to diagnose binding issues
+            try
+            {
+                _logger.LogDebug("Request.Form contents for UserAction Create:");
+                foreach (var key in Request.Form.Keys)
+                {
+                    _logger.LogDebug($"Form[{key}] = '{Request.Form[key]}'");
+                }
+
+                // Log ModelState entries and errors
+                foreach (var entry in ModelState)
+                {
+                    var errors = entry.Value.Errors;
+                    if (errors != null && errors.Count > 0)
+                    {
+                        foreach (var err in errors)
+                        {
+                            _logger.LogWarning($"ModelState error for '{entry.Key}': {err.ErrorMessage} {err.Exception}");
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogDebug($"ModelState OK for '{entry.Key}' Value='{entry.Value?.AttemptedValue}'");
+                    }
+                }
+
+                _logger.LogDebug($"UserAction Create received (model): Name='{action?.Name}', Description='{action?.Description}'");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error logging form/model state for UserAction Create");
+            }
+
             if (!ModelState.IsValid) return View(action);
+
             await _userActionService.CreateUserActionAsync(action);
             return RedirectToAction(nameof(Index));
         }

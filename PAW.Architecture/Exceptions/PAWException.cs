@@ -3,22 +3,20 @@
 /// </summary>
 public class PAWException : Exception
 {
-    private readonly Exception exception;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="PAWException"/> class without an inner exception.
     /// </summary>
     public PAWException()
+        : base("An error occurred in the PAW application.")
     {
-        exception = new Exception();
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PAWException"/> class with an exception message.
     /// </summary>
     public PAWException(string message)
+        : base(message)
     {
-        exception = new Exception(message);
     }
 
     /// <summary>
@@ -26,8 +24,8 @@ public class PAWException : Exception
     /// </summary>
     /// <param name="ex">The inner exception that caused this exception.</param>
     public PAWException(Exception ex)
+        : base(ex?.Message ?? "An error occurred in the PAW application.", ex)
     {
-        exception = ex;
     }
 
     /// <summary>

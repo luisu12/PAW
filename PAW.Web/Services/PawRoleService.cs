@@ -47,8 +47,9 @@ public class PawRoleService : ServiceBase, IPawRoleService
 
     public async Task<bool> UpdatePawRoleAsync(int id, PawRoleDTO role)
     {
-        var content = JsonProvider.Serialize(role);
-        var response = await _restProvider.PutAsync(SetPathUrl(_path), id.ToString(), content);
+        // API Save endpoint expects an array of PawRole objects (POST). Use POST for create/update.
+        var content = JsonProvider.Serialize(new[] { role });
+        var response = await _restProvider.PostAsync(SetPathUrl(_path), content);
         return !string.IsNullOrEmpty(response);
     }
 

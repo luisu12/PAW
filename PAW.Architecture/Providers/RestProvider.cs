@@ -76,6 +76,7 @@ public class RestProvider : IRestProvider
 	{
 		try
 		{
+			System.Diagnostics.Debug.WriteLine($"REST POST to {endpoint} -- content: {content}");
 			var response = await RestProviderHelpers.CreateHttpClient(endpoint)
 				.PostAsync(endpoint, RestProviderHelpers.CreateContent(content));
 			var result = await RestProviderHelpers.GetResponse(response);

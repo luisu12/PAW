@@ -33,14 +33,32 @@ namespace PAW.API.Controllers
         }*/
 
         [HttpPost]
-        public async Task<bool> Save([FromBody] IEnumerable<UserAction> UserActions)
+        public async Task<bool> Save([FromBody] IEnumerable<PAW.Models.DTO.UserActionDTO> UserActions)
         {
-            foreach (var p in UserActions)
+            try
             {
+                var payload = System.Text.Json.JsonSerializer.Serialize(UserActions);
+                logger.LogDebug($"UserAction Save payload: {payload}");
+            }
+            catch { }
+            foreach (var dto in UserActions)
+            {
+                try
+                {
+                    logger.LogDebug($"UserAction DTO: Name='{dto.Name}', Description='{dto.Description}'");
+                }
+                catch { }
+                var p = PAW.Models.DTO.UserActionDTO.ConvertTo(dto);
+                // Normalize nullable Id to ensure primary key is set when present
+                if (p.Id == null)
+                {
+                    p.Id = 0;
+                }
+
                 if (p.Id > 0)
-                    await userActionRepository.CreateAsync(p);
-                else
                     await userActionRepository.UpdateAsync(p);
+                else
+                    await userActionRepository.CreateAsync(p);
             }
 
             /*UserActions.ToList().ForEach(async x =>
@@ -53,9 +71,11 @@ namespace PAW.API.Controllers
             return true;
         }
 
-        [HttpDelete]
-        public async Task<bool> Delete(UserAction userAction)
+        [HttpDelete("{id:int}")]
+        public async Task<bool> Delete(int id)
         {
+            var userAction = await userActionRepository.FindAsync(id);
+            if (userAction == null) return false;
             return await userActionRepository.DeleteAsync(userAction);
         }
     }

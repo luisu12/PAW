@@ -2,6 +2,9 @@
 using PAW.DataAccess.Repositories;
 using PAW.Models;
 using PAW.Models.DTO;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PAW.API.Controllers
 {
@@ -33,14 +36,16 @@ namespace PAW.API.Controllers
         }*/
 
         [HttpPost]
-        public async Task<bool> Save([FromBody] IEnumerable<UserRole> UserRoles)
+        public async Task<bool> Save([FromBody] IEnumerable<PAW.Models.DTO.UserRoleDTO> UserRoles)
         {
-            foreach (var p in UserRoles)
+            foreach (var dto in UserRoles)
             {
+                var p = PAW.Models.DTO.UserRoleDTO.ConvertTo(dto);
+                // Create when id is 0 (new), update when id > 0 (existing)
                 if (p.Id > 0)
-                    await userRoleRepository.CreateAsync(p);
-                else
                     await userRoleRepository.UpdateAsync(p);
+                else
+                    await userRoleRepository.CreateAsync(p);
             }
 
             /*UserRoles.ToList().ForEach(async x =>
@@ -53,9 +58,11 @@ namespace PAW.API.Controllers
             return true;
         }
 
-        [HttpDelete]
-        public async Task<bool> Delete(UserRole userRole)
+        [HttpDelete("{id:int}")]
+        public async Task<bool> Delete(int id)
         {
+            var userRole = await userRoleRepository.FindAsync(id);
+            if (userRole == null) return false;
             return await userRoleRepository.DeleteAsync(userRole);
         }
     }
