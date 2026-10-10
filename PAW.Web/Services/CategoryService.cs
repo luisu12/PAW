@@ -2,6 +2,7 @@
 using PAW.Architecture.Providers;
 using PAW.Models;
 using PAW.Models.DTO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -9,7 +10,7 @@ namespace PAW.Web.Services;
 
 public interface ICategoryService
 {
-    Task<IEnumerable<CategoryDTO>> GetCategoriesAsync();
+    Task<(IEnumerable<CategoryDTO> Items, int TotalItems)> GetCategoriesAsync(int page = 1, int pageSize = 25);
     Task<CategoryDTO?> GetCategoryByIdAsync(int id);
     Task<bool> CreateCategoryAsync(CategoryDTO category);
     Task<bool> UpdateCategoryAsync(int id, CategoryDTO category);
@@ -26,11 +27,29 @@ public class CategoryService : ServiceBase, ICategoryService
         _restProvider = restProvider;
     }
 
-    public async Task<IEnumerable<CategoryDTO>> GetCategoriesAsync()
+    public async Task<(IEnumerable<CategoryDTO> Items, int TotalItems)> GetCategoriesAsync(int page = 1, int pageSize = 25)
     {
-        var response = await _restProvider.GetAsync(SetPathUrl(_path), id: null);
-        var categories = await JsonProvider.DeserializeAsync<IEnumerable<CategoryDTO>>(response);
-        return categories;
+        var url = SetPathUrl(_path) + $"?page={page}&pageSize={pageSize}";
+        var response = await _restProvider.GetAsync(url, id: null);
+        try
+        {
+            var paged = await JsonProvider.DeserializeAsync<PAW.Models.PagedResultDTO<CategoryDTO>>(response);
+            if (paged != null)
+            {
+                return (paged.Items ?? Enumerable.Empty<CategoryDTO>(), paged.TotalItems);
+            }
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            // fallback below
+        }
+
+        // If API still returns a bare array, handle that shape and page client-side
+        var items = await JsonProvider.DeserializeAsync<IEnumerable<CategoryDTO>>(response);
+        var list = (items ?? Enumerable.Empty<CategoryDTO>()).ToList();
+        var totalCount = list.Count;
+        var pagedItems = list.Skip((page - 1) * pageSize).Take(pageSize);
+        return (pagedItems, totalCount);
     }
 
     public async Task<CategoryDTO?> GetCategoryByIdAsync(int id)

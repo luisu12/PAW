@@ -18,10 +18,15 @@ namespace PAW.Web.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var result = await _categoryService.GetCategoriesAsync();
-            return View(result);
+            if (page < 1) page = 1;
+            const int pageSize = 25;
+            var (items, total) = await _categoryService.GetCategoriesAsync(page, pageSize);
+            ViewBag.TotalItems = total;
+            ViewBag.PageSize = pageSize;
+            ViewBag.CurrentPage = page;
+            return View(items);
         }
 
         public IActionResult Create()

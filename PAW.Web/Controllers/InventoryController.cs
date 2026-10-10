@@ -37,7 +37,8 @@ namespace PAW.Web.Controllers
         {
             try
             {
-                var list = await _productService.GetProductsAsync();
+                var (items, _) = await _productService.GetProductsAsync();
+                var list = items ?? System.Linq.Enumerable.Empty<ProductDTO>();
                 ViewBag.Products = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(list, "ProductId", "Name");
                 return;
             }
@@ -46,7 +47,7 @@ namespace PAW.Web.Controllers
                 // ignored - fallback to empty list
             }
 
-            ViewBag.Products = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(System.Array.Empty<object>());
+            ViewBag.Products = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(System.Linq.Enumerable.Empty<ProductDTO>(), "ProductId", "Name");
         }
 
         [HttpPost]

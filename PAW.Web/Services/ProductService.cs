@@ -1,12 +1,13 @@
 ﻿using APW.Architecture;
 using PAW.Architecture.Providers;
 using PAW.Models.DTO;
+using System.Linq;
 
 namespace PAW.Web.Services;
 
 public interface IProductService
 {
-    Task<IEnumerable<ProductDTO>> GetProductsAsync();
+    Task<(IEnumerable<ProductDTO> Items, int TotalItems)> GetProductsAsync(int page = 1, int pageSize = 25);
     Task<ProductDTO?> GetProductByIdAsync(int id);
     Task<bool> CreateProductAsync(ProductDTO product);
     Task<bool> UpdateProductAsync(int id, ProductDTO product);
@@ -23,11 +24,29 @@ public class ProductService : ServiceBase, IProductService
         _restProvider = restProvider;
     }
 
-    public async Task<IEnumerable<ProductDTO>> GetProductsAsync()
+    public async Task<(IEnumerable<ProductDTO> Items, int TotalItems)> GetProductsAsync(int page = 1, int pageSize = 25)
     {
-        var response = await _restProvider.GetAsync(SetPathUrl(_path), id: null);
-        var products = await JsonProvider.DeserializeAsync<IEnumerable<ProductDTO>>(response);
-        return products;
+        var url = SetPathUrl(_path) + $"?page={page}&pageSize={pageSize}";
+        var response = await _restProvider.GetAsync(url, id: null);
+        try
+        {
+            var paged = await JsonProvider.DeserializeAsync<PAW.Models.PagedResultDTO<ProductDTO>>(response);
+            if (paged != null)
+            {
+                return (paged.Items ?? Enumerable.Empty<ProductDTO>(), paged.TotalItems);
+            }
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            // fallback below
+        }
+
+        // If API still returns a bare array, handle that shape and page client-side
+        var items = await JsonProvider.DeserializeAsync<IEnumerable<ProductDTO>>(response);
+        var list = (items ?? Enumerable.Empty<ProductDTO>()).ToList();
+        var totalCount = list.Count;
+        var pagedItems = list.Skip((page - 1) * pageSize).Take(pageSize);
+        return (pagedItems, totalCount);
     }
 
     public async Task<ProductDTO?> GetProductByIdAsync(int id)

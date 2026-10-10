@@ -1,12 +1,14 @@
 ﻿using APW.Architecture;
 using PAW.Architecture.Providers;
 using PAW.Models.DTO;
+using System.Linq;
+using PAW.Models;
 
 namespace PAW.Web.Services;
 
 public interface INotificationService
 {
-    Task<IEnumerable<NotificationDTO>> GetNotificationsAsync();
+    Task<(IEnumerable<NotificationDTO> Items, int TotalItems)> GetNotificationsAsync(int page = 1, int pageSize = 25);
     Task<NotificationDTO?> GetNotificationByIdAsync(int id);
     Task<bool> CreateNotificationAsync(NotificationDTO notification);
     Task<bool> UpdateNotificationAsync(int id, NotificationDTO notification);
@@ -23,11 +25,28 @@ public class NotificationService : ServiceBase, INotificationService
         _restProvider = restProvider;
     }
 
-    public async Task<IEnumerable<NotificationDTO>> GetNotificationsAsync()
+    public async Task<(IEnumerable<NotificationDTO> Items, int TotalItems)> GetNotificationsAsync(int page = 1, int pageSize = 25)
     {
-        var response = await _restProvider.GetAsync(SetPathUrl(_path), id: null);
-        var notifications = await JsonProvider.DeserializeAsync<IEnumerable<NotificationDTO>>(response);
-        return notifications;
+        var url = SetPathUrl(_path) + $"?page={page}&pageSize={pageSize}";
+        var response = await _restProvider.GetAsync(url, id: null);
+        try
+        {
+            var paged = await JsonProvider.DeserializeAsync<PAW.Models.PagedResultDTO<NotificationDTO>>(response);
+            if (paged != null)
+            {
+                return (paged.Items ?? Enumerable.Empty<NotificationDTO>(), paged.TotalItems);
+            }
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            // fallback below
+        }
+
+        var items = await JsonProvider.DeserializeAsync<IEnumerable<NotificationDTO>>(response);
+        var list = (items ?? Enumerable.Empty<NotificationDTO>()).ToList();
+        var totalCount = list.Count;
+        var pagedItems = list.Skip((page - 1) * pageSize).Take(pageSize);
+        return (pagedItems, totalCount);
     }
 
     public async Task<NotificationDTO?> GetNotificationByIdAsync(int id)

@@ -1,0 +1,54 @@
+@{
+    int totalItems = (int)(ViewBag.TotalItems ?? 0);
+    int pageSize = (int)(ViewBag.PageSize ?? 25);
+    int currentPage = (int)(ViewBag.CurrentPage ?? 1);
+    int totalPages = pageSize > 0 ? (int)System.Math.Ceiling((double)totalItems / pageSize) : 1;
+    int window = 2; // pages before and after current
+}
+
+@if (totalPages > 1)
+{
+    <nav aria-label="Pager">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="1">&laquo;</a>
+            </li>
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)">&lt;</a>
+            </li>
+
+            @if (currentPage - window > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="1">1</a>
+                </li>
+                <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+            }
+
+            @for (int p = System.Math.Max(1, currentPage - window); p <= System.Math.Min(totalPages, currentPage + window); p++)
+            {
+                if (p == currentPage)
+                {
+                    <li class="page-item active"><span class="page-link">@p</span></li>
+                }
+                else
+                {
+                    <li class="page-item"><a class="page-link" asp-action="Index" asp-route-page="@p">@p</a></li>
+                }
+            }
+
+            @if (currentPage + window < totalPages)
+            {
+                <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+                <li class="page-item"><a class="page-link" asp-action="Index" asp-route-page="@totalPages">@totalPages</a></li>
+            }
+
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)">&gt;</a>
+            </li>
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@totalPages">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
+}

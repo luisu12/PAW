@@ -15,4 +15,8 @@
     <ProjectReference Include="..\PAW.Models\PAW.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>
