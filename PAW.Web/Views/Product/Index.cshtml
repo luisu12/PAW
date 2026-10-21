@@ -5,6 +5,34 @@
 
 <div class="container mt-4">
 
+    <div class="d-flex justify-content-end mb-3">
+        <div id="exchangeRateCard" class="card border-0 shadow-sm d-none" style="max-width: 320px; width: 100%;">
+            <div class="card-body py-2 px-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h6 class="mb-0">Exchange rate</h6>
+                    <small id="exchangeRateUpdated" class="text-muted"></small>
+                </div>
+                <div id="exchangeRateStatus" class="small text-muted mb-2">Loading...</div>
+                <div class="small d-flex justify-content-between">
+                    <span>USD Buy</span>
+                    <strong id="exchangeRateBuy">-</strong>
+                </div>
+                <div class="small d-flex justify-content-between">
+                    <span>USD Sell</span>
+                    <strong id="exchangeRateSell">-</strong>
+                </div>
+                <div class="small d-flex justify-content-between">
+                    <span>EUR/USD</span>
+                    <strong id="exchangeRateEuroUsd">-</strong>
+                </div>
+                <div class="small d-flex justify-content-between">
+                    <span>EUR/CRC</span>
+                    <strong id="exchangeRateEuroCrc">-</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Products</h2>
 
