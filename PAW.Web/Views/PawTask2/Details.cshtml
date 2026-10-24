@@ -1,0 +1,22 @@
+@model PAW.Models.DTO.PawTask2DTO
+@{
+    ViewData["Title"] = "Task2 Details";
+}
+
+<div class="container mt-4">
+    <h2>Task2 Details</h2>
+    <dl class="row">
+        <dt class="col-sm-3">Task2 ID</dt>
+        <dd class="col-sm-9">@Model.Id</dd>
+
+        <dt class="col-sm-3">User ID</dt>
+        <dd class="col-sm-9">@Model.UserId</dd>
+
+        <dt class="col-sm-3">Title</dt>
+        <dd class="col-sm-9">@Model.Title</dd>
+
+        <dt class="col-sm-3">Completed</dt>
+        <dd class="col-sm-9">@(Model.Completed ? "Yes" : "No")</dd>
+    </dl>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>

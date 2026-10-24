@@ -17,6 +17,11 @@ builder.Services.AddScoped<IPawTaskService, PawTaskService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserActionService, UserActionService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
+builder.Services.AddHttpClient<IPawTask2Service, PawTask2Service>(client =>
+{
+    var baseUrl = builder.Configuration["PawTask2Api:BaseUrl"] ?? "https://localhost:7164/";
+    client.BaseAddress = new Uri(baseUrl);
+});
 
 
 var app = builder.Build();
