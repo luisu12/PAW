@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PAW.DataAccess\PAW.DataAccess.csproj" />
     <ProjectReference Include="..\PAW.Models\PAW.Models.csproj" />
+    <ProjectReference Include="..\PAW.Tasks\PAW.Tasks.csproj" />
   </ItemGroup>
 
   <ItemGroup>

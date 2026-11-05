@@ -1,5 +1,6 @@
 using PAW.DataAccess.MSSQL;
 using PAW.DataAccess.Repositories;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "PAW.API",
+        Version = "v1"
+    });
+});
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddDbContext<ProductDbContext>();
@@ -30,7 +38,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "PAW.API v1");
+    });
 }
 
 app.UseHttpsRedirection();
